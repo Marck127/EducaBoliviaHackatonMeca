@@ -138,7 +138,7 @@ function Analisis({ imp, onAplicar, onDescartar, aplicando }) {
       descripcion={`Gestión ${imp.gestion} · hoja «${r.hoja}» · ${entero(r.filas_leidas)} filas leídas${r.filas_omitidas ? `, ${entero(r.filas_omitidas)} omitidas` : ''}`}>
       <div className="space-y-6">
         {imp.demo && (
-          <p className="rounded-lg bg-[#eaf2fc] px-4 py-3 text-sm text-[#1c5cab]">
+          <p className="rounded-lg bg-serie-1-pista px-4 py-3 text-sm text-tinta">
             En la demo no se procesa tu archivo: este es el análisis real que hizo el servidor con {imp.archivo}. Con el modo Supabase o FastAPI se analiza el archivo que subas.
           </p>
         )}
@@ -287,7 +287,7 @@ export default function Importar() {
                 <div onDragOver={(e) => { e.preventDefault(); setArrastrando(true) }} onDragLeave={() => setArrastrando(false)}
                   onDrop={(e) => { e.preventDefault(); setArrastrando(false); elegir(e.dataTransfer.files?.[0]) }}
                   className={cx('flex flex-col items-start gap-3 rounded-xl border-2 border-dashed p-6 transition-colors',
-                    arrastrando ? 'border-serie-1 bg-[#eef5fd]' : 'border-borde-fuerte bg-fondo/60')}>
+                    arrastrando ? 'border-serie-1 bg-serie-1-pista/70' : 'border-borde-fuerte bg-fondo/60')}>
                   <FileUp className="size-8 text-texto-3" aria-hidden />
                   {archivo ? (
                     <p className="text-sm"><span className="font-medium">{archivo.name}</span> <span className="text-texto-3">({num(archivo.size / 1024, 0)} KB)</span></p>
@@ -307,8 +307,8 @@ export default function Importar() {
                 <p className="text-[13px] font-medium text-texto-2">Cómo aplicar el archivo</p>
                 {[['sincronizar', 'El archivo trae toda la gestión hasta hoy', 'Lo que el sistema contable corrigió o borró se refleja. Es lo normal con el export diario.'],
                   ['agregar', 'Solo agregar filas nuevas', 'Para archivos parciales: no elimina nada de lo que ya está.']].map(([v, t, d]) => (
-                  <label key={v} className={cx('flex cursor-pointer gap-3 rounded-lg border px-3 py-2.5', modo === v ? 'border-serie-1 bg-[#f5f9fe]' : 'border-borde')}>
-                    <input type="radio" name="modo" value={v} checked={modo === v} onChange={() => setModo(v)} className="mt-1 accent-[#1f3a5f]" />
+                  <label key={v} className={cx('flex cursor-pointer gap-3 rounded-lg border px-3 py-2.5', modo === v ? 'border-serie-1 bg-serie-1-pista/50' : 'border-borde')}>
+                    <input type="radio" name="modo" value={v} checked={modo === v} onChange={() => setModo(v)} className="mt-1 accent-tinta" />
                     <span><span className="block text-sm font-medium">{t}</span><span className="block text-[12.5px] text-texto-2">{d}</span></span>
                   </label>
                 ))}

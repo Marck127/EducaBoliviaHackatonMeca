@@ -1,4 +1,4 @@
-import { errorDe, exportar, memoria, subirExcel } from './comun.js'
+import { errorDe, exportar, memoria, subirExcel, subirExcelAutomatico } from './comun.js'
 
 // Modo de la foto: FastAPI + SQLAlchemy + PostgreSQL. La API hace el login y todas las consultas.
 export function crear(cfg) {
@@ -48,6 +48,7 @@ export function crear(cfg) {
     },
     rpc,
     subirExcel: (archivo, op) => subirExcel(llamar, archivo, op),
+    subirExcelAutomatico: (archivo, op) => subirExcelAutomatico(llamar, archivo, op),
     confirmar: async (id) => (await llamar(`/importaciones/${id}/confirmar`, { method: 'POST' })).json(),
     descartar: async (id) => (await llamar(`/importaciones/${id}/descartar`, { method: 'POST' })).json(),
     exportar: (pedido) => exportar(llamar, pedido),

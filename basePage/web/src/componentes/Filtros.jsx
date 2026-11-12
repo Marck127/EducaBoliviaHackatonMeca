@@ -18,7 +18,7 @@ export function Multi({ etiqueta, opciones, valor = [], onCambiar }) {
     <div className="relative" ref={ref}>
       <button type="button" onClick={() => setAbierto((a) => !a)} aria-expanded={abierto} aria-haspopup="listbox"
         className={cx('inline-flex h-9 max-w-[240px] items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors',
-          valor.length ? 'border-serie-1/50 bg-[#eef5fd] text-texto' : 'border-borde-fuerte bg-superficie text-texto-2 hover:text-texto')}>
+          valor.length ? 'border-serie-1/50 bg-serie-1-pista text-texto' : 'border-borde-fuerte bg-superficie text-texto-2 hover:text-texto')}>
         <span className="text-texto-2">{etiqueta}:</span>
         <span className="truncate font-medium text-texto">{resumen}</span>
         <ChevronDown className="size-3.5 shrink-0 text-texto-3" aria-hidden />
@@ -130,7 +130,7 @@ export function BarraFiltros({ filtros, onCambiar, conTexto = false, conMeses = 
         </div>
       )}
       {filtros.meses?.length > 0 && (
-        <span className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-serie-1/50 bg-[#eef5fd] px-3 text-sm">
+        <span className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-serie-1/50 bg-serie-1-pista px-3 text-sm">
           <span className="text-texto-2">Mes:</span>
           <span className="font-medium">{filtros.meses.map((m) => MESES_CORTOS[m - 1]).join(', ')}</span>
           <button type="button" onClick={() => poner('meses', null)} className="rounded p-0.5 text-texto-3 hover:text-texto" aria-label="Quitar el filtro de mes">

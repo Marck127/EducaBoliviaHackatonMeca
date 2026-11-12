@@ -18,6 +18,15 @@ export async function subirExcel(llamar, archivo, { modo = 'sincronizar', gestio
   return (await llamar('/importaciones', { method: 'POST', body: fd })).json()
 }
 
+export async function subirExcelAutomatico(llamar, archivo, { modo = 'sincronizar', gestion, forzarConErrores = false } = {}) {
+  const fd = new FormData()
+  fd.append('archivo', archivo)
+  fd.append('modo', modo)
+  fd.append('forzar_con_errores', String(Boolean(forzarConErrores)))
+  if (gestion) fd.append('gestion', String(gestion))
+  return (await llamar('/importaciones/automatico', { method: 'POST', body: fd })).json()
+}
+
 export async function exportar(llamar, pedido) {
   const r = await llamar('/exportar', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pedido),

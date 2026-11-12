@@ -97,7 +97,7 @@ export default function Movimientos({ ruta }) {
                 <tbody>
                   {filas.map((m) => (
                     <Fragment key={m.id}>
-                      <tr className="cursor-pointer border-b border-borde/70 align-top hover:bg-[#f2f6fb] focus-visible:bg-[#f2f6fb]" tabIndex={0}
+                      <tr className="cursor-pointer border-b border-borde/70 align-top hover:bg-serie-1-pista/40 focus-visible:bg-serie-1-pista/40" tabIndex={0}
                         onClick={() => setAbierto(abierto === m.id ? null : m.id)} aria-expanded={abierto === m.id}
                         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setAbierto(abierto === m.id ? null : m.id) } }}>
                         <td className="num px-4 py-2.5 whitespace-nowrap text-texto-2">{fecha(m.fecha)}</td>

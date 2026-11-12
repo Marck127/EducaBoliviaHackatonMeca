@@ -11,8 +11,8 @@ function Marca() {
   return (
     <svg viewBox="0 0 32 32" className="size-8 shrink-0" aria-hidden>
       <rect width="32" height="32" rx="7" fill="#ffffff" fillOpacity="0.1" />
-      <rect x="7" y="17" width="4" height="8" rx="1" fill="#86b6ef" />
-      <rect x="14" y="11" width="4" height="14" rx="1" fill="#86b6ef" />
+      <rect x="7" y="17" width="4" height="8" rx="1" fill="#26A567" />
+      <rect x="14" y="11" width="4" height="14" rx="1" fill="#26A567" />
       <rect x="21" y="7" width="4" height="18" rx="1" fill="#ffffff" />
     </svg>
   )
@@ -103,7 +103,7 @@ export function Layout({ actual, titulo, children }) {
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 lg:block">{lateral}</aside>
       {menu && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-[#0e1a2a]/50" onClick={() => setMenu(false)} />
+          <div className="absolute inset-0 bg-[#1b2420]/50" onClick={() => setMenu(false)} />
           <aside className="relative h-full w-64">
             {lateral}
             <button type="button" onClick={() => setMenu(false)} className="absolute top-4 right-3 rounded-md p-1.5 text-white/70 hover:bg-white/10" aria-label="Cerrar menú">

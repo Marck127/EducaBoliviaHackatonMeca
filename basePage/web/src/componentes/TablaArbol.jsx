@@ -106,8 +106,8 @@ export function TablaArbol({ filas, dims, criterio = 'real', moneda = 'BS', onVe
             const anual = dims[f.nivel - 1] === 'mes' && f[`k${f.nivel}`] === '0'
             return (
               <tr key={k || 'total'} className={cx('group border-b border-borde/70',
-                total ? 'border-t-2 border-t-borde-fuerte bg-[#eef3f9] font-semibold' : f.nivel === 1 && n > 1 ? 'bg-[#fafbfc] font-medium' : tieneHijos ? 'bg-superficie font-medium' : 'bg-superficie',
-                'hover:bg-[#f2f6fb]')}>
+                total ? 'border-t-2 border-t-borde-fuerte bg-serie-1-pista font-semibold' : f.nivel === 1 && n > 1 ? 'bg-[#fafbfc] font-medium' : tieneHijos ? 'bg-superficie font-medium' : 'bg-superficie',
+                'hover:bg-serie-1-pista/40')}>
                 <th scope="row" className={cx('py-2 pr-3 text-left', total ? 'font-semibold' : tieneHijos || (f.nivel === 1 && n > 1) ? 'font-medium' : 'font-normal')}
                   style={{ paddingLeft: `${12 + Math.max(f.nivel - 1, 0) * 20}px` }}>
                   <div className="flex items-center gap-1.5">

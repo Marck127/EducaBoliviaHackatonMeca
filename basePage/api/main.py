@@ -309,6 +309,60 @@ async def importar_automatico(
         "resultado": resultado,
     }
 
+@app.post("/importaciones/automatico")
+async def importar_automatico(
+    archivo: UploadFile = File(...),
+    gestion: int | None = Form(None),
+    modo: Literal["sincronizar", "agregar"] = Form("sincronizar"),
+    forzar_con_errores: bool = Form(False),
+    sb=Depends(cliente),
+):
+    """Carga, valida y aplica automáticamente en la base de datos (exclusivo Admin)."""
+    if not await sb.rpc("es_admin", {}):
+        raise HTTPException(403, "Solo un administrador puede ejecutar la carga automática")
+    nombre = archivo.filename or "archivo.xlsx"
+    if not nombre.lower().endswith((".xlsx", ".xlsm")):
+        raise HTTPException(415, "Sube el archivo en formato .xlsx")
+    contenido = await archivo.read(MAX_MB * 1024 * 1024 + 1)
+    if len(contenido) > MAX_MB * 1024 * 1024:
+        raise HTTPException(413, f"El archivo pasa de {MAX_MB} MB")
+    try:
+        lec = await run_in_threadpool(leer_excel, contenido, nombre, gestion)
+    except ErrorLectura as e:
+        raise HTTPException(422, str(e)) from e
+
+    errores = [v for v in lec.validaciones if v.get("severidad") == "error"]
+    if errores and not forzar_con_errores:
+        raise HTTPException(422, detail={
+            "mensaje": "El archivo contiene errores de validación. Activa 'forzar con errores' o usa Importar Excel.",
+            "validaciones": errores,
+        })
+
+    imp_id = await sb.rpc("importacion_iniciar", {
+        "p_gestion": lec.gestion, "p_archivo": nombre, "p_sha256": lec.sha256, "p_modo": modo,
+        "p_resumen": lec.resumen, "p_validaciones": lec.validaciones})
+    try:
+        filas = lec.presupuestos + lec.movimientos
+        for i in range(0, len(filas), LOTE):
+            await sb.rpc("importacion_cargar", {"p_id": imp_id, "p_filas": filas[i:i + LOTE]})
+        resultado = await sb.rpc("importacion_confirmar", {"p_id": imp_id})
+    except Exception:
+        try:
+            await sb.rpc("importacion_descartar", {"p_id": imp_id})
+        except Exception:  # noqa: BLE001
+            pass
+        raise
+    return {
+        "importacion_id": imp_id,
+        "gestion": lec.gestion,
+        "archivo": nombre,
+        "automatico": True,
+        "resumen": lec.resumen,
+        "validaciones": lec.validaciones,
+        "resultado": resultado,
+    }
+
+
 @app.post("/importaciones/{imp_id}/confirmar")
 async def confirmar(imp_id: int, sb=Depends(cliente)):
     return await sb.rpc("importacion_confirmar", {"p_id": imp_id})

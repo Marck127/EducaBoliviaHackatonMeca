@@ -61,6 +61,10 @@ export async function crear() {
       return r
     },
     async subirExcel() { return motor.importacionDemo() },
+    async subirExcelAutomatico() {
+      const imp = motor.importacionDemo()
+      return { ...imp, automatico: true, resultado: imp.vista_previa }
+    },
     async confirmar() { return motor.importacionDemo().vista_previa },
     async descartar() { return { ok: true } },
     async exportar() { throw new Error('En la demo las tablas se descargan en CSV') },

@@ -40,8 +40,8 @@ export function Panel({ titulo, descripcion, acciones, children, className, cuer
 
 const TONOS = {
   neutro: 'bg-fondo text-texto-2 border-borde',
-  info: 'bg-[#eaf2fc] text-[#1c5cab] border-[#cde2fb]',
-  bien: 'bg-[#e9f6e9] text-bien-texto border-[#c8e9c8]',
+  info: 'bg-serie-1-pista text-tinta border-serie-1-claro',
+  bien: 'bg-serie-1-pista text-bien-texto border-serie-1-claro',
   aviso: 'bg-[#fff6e0] text-[#7a5200] border-[#fbe2a6]',
   serio: 'bg-[#fdeee7] text-[#8f3b17] border-[#f8d3c3]',
   critico: 'bg-[#fbeaea] text-[#9e2020] border-[#f2c5c5]',
@@ -155,7 +155,7 @@ export function Modal({ abierto, titulo, onCerrar, children, pie, ancho = 'max-w
   }, [abierto, onCerrar])
   if (!abierto) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0e1a2a]/45 p-4 sm:items-center" onMouseDown={(e) => e.target === e.currentTarget && onCerrar()}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#1b2420]/45 p-4 sm:items-center" onMouseDown={(e) => e.target === e.currentTarget && onCerrar()}>
       <div ref={ref} role="dialog" aria-modal="true" aria-label={titulo} className={cx('w-full rounded-xl border border-borde bg-superficie shadow-xl', ancho)}>
         <header className="flex items-center justify-between gap-4 border-b border-borde px-5 py-3.5">
           <h2 className="text-[15px] font-semibold">{titulo}</h2>

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { errorDe, exportar, subirExcel } from './comun.js'
+import { errorDe, exportar, subirExcel, subirExcelAutomatico } from './comun.js'
 
 const ERRORES_AUTH = {
   'Invalid login credentials': 'Correo o contraseña incorrectos',
@@ -50,6 +50,7 @@ export function crear(cfg) {
     async salir() { await sb.auth.signOut() },
     rpc,
     subirExcel: (archivo, op) => subirExcel(llamar, archivo, op),
+    subirExcelAutomatico: (archivo, op) => subirExcelAutomatico(llamar, archivo, op),
     confirmar: async (id) => (await llamar(`/importaciones/${id}/confirmar`, { method: 'POST' })).json(),
     descartar: async (id) => (await llamar(`/importaciones/${id}/descartar`, { method: 'POST' })).json(),
     exportar: (pedido) => exportar(llamar, pedido),

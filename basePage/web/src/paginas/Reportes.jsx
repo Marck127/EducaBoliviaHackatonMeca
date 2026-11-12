@@ -194,7 +194,7 @@ function VistaComparativo({ filtros }) {
           <span className="text-texto-2">Gestiones</span>
           {disponibles.map((a) => (
             <label key={a} className="inline-flex items-center gap-1.5">
-              <input type="checkbox" checked={elegidas.includes(a)} onChange={() => setElegidas((e) => (e.includes(a) ? e.filter((x) => x !== a) : [...e, a]))} className="size-4 accent-[#1f3a5f]" />
+              <input type="checkbox" checked={elegidas.includes(a)} onChange={() => setElegidas((e) => (e.includes(a) ? e.filter((x) => x !== a) : [...e, a]))} className="size-4 accent-tinta" />
               {a}
             </label>
           ))}

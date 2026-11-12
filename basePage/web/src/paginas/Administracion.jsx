@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { KeyRound, Lock, LockOpen, RotateCcw, UserPlus } from 'lucide-react'
+import { CheckCircle2, FileUp, KeyRound, Lock, LockOpen, RotateCcw, UserPlus } from 'lucide-react'
 import { useSesion } from '../componentes/Sesion.jsx'
 import { Boton, Campo, Cargando, claseCampo, Insignia, MensajeError, Modal, Panel, Pestanas } from '../componentes/Ui.jsx'
 import { fechaHora, num } from '../lib/formato.js'
@@ -196,6 +196,177 @@ function Auditoria() {
   )
 }
 
+function CargaAutomatica() {
+  const { datos, catalogos, gestion, refrescar, avisar } = useSesion()
+  const [archivo, setArchivo] = useState(null)
+  const [modo, setModo] = useState('sincronizar')
+  const [gestionArchivo, setGestionArchivo] = useState('')
+  const [forzar, setForzar] = useState(false)
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState(null)
+  const [resultado, setResultado] = useState(null)
+
+  const sinServidor = datos.modo === 'supabase' && !datos.capacidades.servidorArchivos
+
+  const ejecutar = async (e) => {
+    e.preventDefault()
+    if (!archivo && datos.modo !== 'demo') return
+    setCargando(true)
+    setError(null)
+    setResultado(null)
+    try {
+      const res = await datos.subirExcelAutomatico(archivo, {
+        modo,
+        gestion: gestionArchivo || undefined,
+        forzarConErrores: forzar,
+      })
+      setResultado(res)
+      setArchivo(null)
+      const movs = res.resultado?.movimiento?.nuevos ?? 0
+      avisar(`Importación #${res.importacion_id} organizada en la base (${num(movs, 0)} movimientos nuevos)`)
+      refrescar()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  return (
+    <Panel
+      titulo="Carga y organización automática en base de datos"
+      descripcion="Sube el Excel del sistema contable y el servidor normalizará catálogos, presupuestos, movimientos y tipos de cambio directamente sin paso de borrador."
+    >
+      <form onSubmit={ejecutar} className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Campo etiqueta="Archivo Excel (.xlsx / .xlsm)" className="sm:col-span-2">
+            <input
+              type="file"
+              accept=".xlsx,.xlsm"
+              disabled={datos.modo === 'demo'}
+              onChange={(e) => {
+                setError(null)
+                setArchivo(e.target.files?.[0] || null)
+              }}
+              className="block w-full rounded-lg border border-borde-fuerte bg-superficie px-3 py-1.5 text-sm text-texto file:mr-3 file:rounded-md file:border-0 file:bg-serie-1 file:px-3 file:py-1 file:text-xs file:font-medium file:text-white hover:file:bg-tinta"
+            />
+          </Campo>
+
+          <Campo etiqueta="Gestión (opcional)">
+            <select
+              value={gestionArchivo}
+              onChange={(e) => setGestionArchivo(e.target.value)}
+              className={claseCampo}
+            >
+              <option value="">Auto-detectar por fechas</option>
+              {[...new Set([...(catalogos.gestiones || []).map((g) => g.anio), new Date().getFullYear(), gestion].filter(Boolean))]
+                .sort((a, b) => b - a)
+                .map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+            </select>
+          </Campo>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-borde bg-fondo/60 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-5 text-sm">
+            <label className="inline-flex cursor-pointer items-center gap-2 font-medium text-texto">
+              <input
+                type="radio"
+                name="modoAuto"
+                value="sincronizar"
+                checked={modo === 'sincronizar'}
+                onChange={() => setModo('sincronizar')}
+                className="accent-serie-1"
+              />
+              Sincronizar gestión completa
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-2 font-medium text-texto">
+              <input
+                type="radio"
+                name="modoAuto"
+                value="agregar"
+                checked={modo === 'agregar'}
+                onChange={() => setModo('agregar')}
+                className="accent-serie-1"
+              />
+              Solo agregar filas nuevas
+            </label>
+          </div>
+
+          <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-texto-2">
+            <input
+              type="checkbox"
+              checked={forzar}
+              onChange={(e) => setForzar(e.target.checked)}
+              className="accent-serie-1"
+            />
+            Aplicar incluso si existen errores de validación
+          </label>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Boton
+            type="submit"
+            variante="primario"
+            icono={FileUp}
+            cargando={cargando}
+            disabled={(!archivo && datos.modo !== 'demo') || sinServidor}
+          >
+            Cargar y organizar automáticamente
+          </Boton>
+          {sinServidor && (
+            <span className="text-xs text-critico">Falta configurar API_URL en config.js para procesar Excel.</span>
+          )}
+        </div>
+      </form>
+
+      {error && (
+        <div className="mt-4">
+          <MensajeError error={error} />
+        </div>
+      )}
+
+      {resultado && (
+        <div className="mt-5 rounded-xl border border-serie-1/40 bg-serie-1-pista/60 p-4">
+          <div className="flex items-center gap-2 text-sm font-semibold text-tinta">
+            <CheckCircle2 className="size-4 text-serie-1" />
+            <span>
+              Importación #{resultado.importacion_id} organizada en la gestión {resultado.gestion} ({resultado.archivo})
+            </span>
+          </div>
+          <dl className="mt-3 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
+            <div className="rounded-lg border border-borde bg-superficie p-2.5">
+              <dt className="text-texto-3">Presupuestos nuevos</dt>
+              <dd className="num mt-0.5 text-sm font-semibold text-tinta">
+                {num(resultado.resultado?.presupuesto?.nuevos ?? 0, 0)}
+              </dd>
+            </div>
+            <div className="rounded-lg border border-borde bg-superficie p-2.5">
+              <dt className="text-texto-3">Movimientos nuevos</dt>
+              <dd className="num mt-0.5 text-sm font-semibold text-tinta">
+                {num(resultado.resultado?.movimiento?.nuevos ?? 0, 0)}
+              </dd>
+            </div>
+            <div className="rounded-lg border border-borde bg-superficie p-2.5">
+              <dt className="text-texto-3">Sin cambios</dt>
+              <dd className="num mt-0.5 text-sm font-semibold text-texto-2">
+                {num((resultado.resultado?.presupuesto?.sin_cambio ?? 0) + (resultado.resultado?.movimiento?.sin_cambio ?? 0), 0)}
+              </dd>
+            </div>
+            <div className="rounded-lg border border-borde bg-superficie p-2.5">
+              <dt className="text-texto-3">Observaciones</dt>
+              <dd className="num mt-0.5 text-sm font-semibold text-texto">
+                {num(resultado.validaciones?.length ?? 0, 0)}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      )}
+    </Panel>
+  )
+}
+
 export default function Administracion() {
   const { datos } = useSesion()
   const [pestana, setPestana] = useState('usuarios')
@@ -203,10 +374,11 @@ export default function Administracion() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Pestanas etiqueta="Administración" activa={pestana} onCambiar={setPestana}
-          items={[{ clave: 'usuarios', etiqueta: 'Usuarios' }, { clave: 'gestiones', etiqueta: 'Gestiones' }, { clave: 'auditoria', etiqueta: 'Auditoría' }]} />
+          items={[{ clave: 'usuarios', etiqueta: 'Usuarios' }, { clave: 'carga', etiqueta: 'Carga automática' }, { clave: 'gestiones', etiqueta: 'Gestiones' }, { clave: 'auditoria', etiqueta: 'Auditoría' }]} />
         {datos.modo === 'demo' && <Boton tamano="sm" variante="fantasma" icono={RotateCcw} onClick={datos.reiniciar}>Reiniciar la demo</Boton>}
       </div>
       {pestana === 'usuarios' && <Usuarios />}
+      {pestana === 'carga' && <CargaAutomatica />}
       {pestana === 'gestiones' && <Gestiones />}
       {pestana === 'auditoria' && <Auditoria />}
     </div>

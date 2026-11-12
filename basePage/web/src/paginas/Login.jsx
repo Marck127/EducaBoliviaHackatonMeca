@@ -43,7 +43,7 @@ export default function Login({ datos, onEntrar }) {
           {[0.92, 0.66, 0.8, 0.48, 0.72, 0.58].map((p, i) => (
             <g key={i} transform={`translate(0 ${i * 30})`}>
               <rect x="0" y="0" width="500" height="10" rx="5" fill="#ffffff" fillOpacity="0.1" />
-              <rect x="0" y="0" width={500 * p * 0.36} height="10" rx="5" fill="#86b6ef" />
+              <rect x="0" y="0" width={500 * p * 0.36} height="10" rx="5" fill="#26A567" />
               <line x1={500 * 0.75} x2={500 * 0.75} y1="-6" y2="16" stroke="#ffffff" strokeOpacity="0.5" strokeWidth="1.5" />
             </g>
           ))}
@@ -64,7 +64,7 @@ export default function Login({ datos, onEntrar }) {
               {datos.usuariosDemo.map((u) => (
                 <li key={u.user_id}>
                   <button type="button" onClick={() => entrar(u.email)} disabled={enviando}
-                    className="flex w-full items-center justify-between gap-3 rounded-lg border border-borde-fuerte px-4 py-3 text-left hover:border-serie-1 hover:bg-[#f5f9fe]">
+                    className="flex w-full items-center justify-between gap-3 rounded-lg border border-borde-fuerte px-4 py-3 text-left hover:border-serie-1 hover:bg-serie-1-pista/50">
                     <span>
                       <span className="block font-medium">{u.nombre}</span>
                       <span className="block text-[13px] text-texto-2">{DESCRIPCION_ROL[u.rol]}</span>

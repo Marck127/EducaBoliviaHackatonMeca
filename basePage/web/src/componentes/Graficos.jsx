@@ -3,13 +3,13 @@ import { compacto, dinero, pct } from '../lib/formato.js'
 
 // Paleta validada (orden fijo, nunca se recicla) y tonos de la misma familia para presupuesto/ejecutado
 export const COLORES = {
-  serie: ['#2a78d6', '#eb6834', '#1baf7a'],
-  presupuesto: '#b7d3f6',
-  ejecutado: '#2a78d6',
-  referencia: '#8a94a0',
-  rejilla: '#e7ebf0',
-  eje: '#c9d0da',
-  tinta: '#7d8896',
+  serie: ['#26A567', '#417545', '#659184'],
+  presupuesto: '#a8dfc3',
+  ejecutado: '#26A567',
+  referencia: '#919090',
+  rejilla: '#e2e6e4',
+  eje: '#c5cdc9',
+  tinta: '#659184',
 }
 const ejeX = { tick: { fill: COLORES.tinta, fontSize: 12 }, axisLine: { stroke: COLORES.eje }, tickLine: false }
 const ejeY = { tick: { fill: COLORES.tinta, fontSize: 12 }, axisLine: false, tickLine: false }
@@ -59,7 +59,7 @@ export function BarrasPresupuesto({ datos, moneda = 'BS', onElegir, etiquetaPres
           <CartesianGrid horizontal={false} stroke={COLORES.rejilla} />
           <XAxis type="number" {...ejeX} tickFormatter={compacto} />
           <YAxis type="category" dataKey="etiqueta" width={176} {...ejeY} tickFormatter={(t) => recortar(t)} />
-          <Tooltip cursor={{ fill: '#eef3f9' }} content={<Contenido moneda={moneda}
+          <Tooltip cursor={{ fill: '#e6f5ed' }} content={<Contenido moneda={moneda}
             extra={(d) => d && <p className="mt-1 border-t border-borde pt-1 text-texto-2">Ejecución <span className="num font-semibold text-texto">{pct(d.pct)}</span></p>} />} />
           <Bar dataKey="presupuesto" name={etiquetaPresupuesto} fill={COLORES.presupuesto} radius={[0, 4, 4, 0]} maxBarSize={12} isAnimationActive={false}
             onClick={onElegir ? (d) => onElegir(d.payload ?? d) : undefined} cursor={onElegir ? 'pointer' : undefined} />
@@ -81,7 +81,7 @@ export function BarrasSeries({ datos, series, moneda = 'BS' }) {
           <CartesianGrid horizontal={false} stroke={COLORES.rejilla} />
           <XAxis type="number" {...ejeX} tickFormatter={compacto} />
           <YAxis type="category" dataKey="etiqueta" width={176} {...ejeY} tickFormatter={(t) => recortar(t)} />
-          <Tooltip cursor={{ fill: '#eef3f9' }} content={<Contenido moneda={moneda} />} />
+          <Tooltip cursor={{ fill: '#e6f5ed' }} content={<Contenido moneda={moneda} />} />
           {series.map((s) => (
             <Bar key={s.clave} dataKey={s.clave} name={s.nombre} fill={s.color} radius={[0, 4, 4, 0]} maxBarSize={12} isAnimationActive={false} />
           ))}
@@ -99,7 +99,7 @@ export function ColumnasMes({ datos, moneda = 'BS', nombre = 'Ejecutado' }) {
           <CartesianGrid vertical={false} stroke={COLORES.rejilla} />
           <XAxis dataKey="corto" {...ejeX} />
           <YAxis {...ejeY} width={64} tickFormatter={compacto} />
-          <Tooltip cursor={{ fill: '#eef3f9' }} content={<Contenido moneda={moneda} />} />
+          <Tooltip cursor={{ fill: '#e6f5ed' }} content={<Contenido moneda={moneda} />} />
           <Bar dataKey="valor" name={nombre} fill={COLORES.ejecutado} radius={[4, 4, 0, 0]} maxBarSize={24} isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>

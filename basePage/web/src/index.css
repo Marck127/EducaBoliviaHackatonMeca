@@ -3,8 +3,9 @@
 @import "@fontsource/ibm-plex-sans/latin-500.css";
 @import "@fontsource/ibm-plex-sans/latin-600.css";
 
-/* Tokens. La tinta es el mismo azul de los PDF y Excel que exporta la API:
-   la web y los reportes impresos se ven como un solo sistema. */
+/* Paleta institucional:
+   #FFFFFF (blanco/base), #417545 (verde oscuro), #26A567 (verde principal),
+   #919090 (gris), #659184 (verde grisáceo) */
 @theme {
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --color-tinta: #417545;
