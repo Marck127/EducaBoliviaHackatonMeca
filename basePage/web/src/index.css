@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@import "@fontsource/ibm-plex-sans/latin-400.css";
+@import "@fontsource/ibm-plex-sans/latin-500.css";
+@import "@fontsource/ibm-plex-sans/latin-600.css";
+
+/* Tokens. La tinta es el mismo azul de los PDF y Excel que exporta la API:
+   la web y los reportes impresos se ven como un solo sistema. */
+@theme {
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-tinta: #1f3a5f;
+  --color-tinta-oscura: #172d4a;
+  --color-tinta-clara: #2c4b74;
+  --color-fondo: #f2f4f7;
+  --color-superficie: #ffffff;
+  --color-borde: #e1e5eb;
+  --color-borde-fuerte: #c9d0da;
+  --color-texto: #15202d;
+  --color-texto-2: #4f5d6c;
+  --color-texto-3: #7d8896;
+  /* Series (paleta validada para daltonismo, en orden fijo) */
+  --color-serie-1: #2a78d6;
+  --color-serie-1-claro: #b7d3f6;
+  --color-serie-1-pista: #e3eefc;
+  --color-serie-2: #eb6834;
+  --color-serie-3: #1baf7a;
+  /* Estados: solo cuando el color significa algo, siempre con ícono y texto */
+  --color-bien: #0ca30c;
+  --color-bien-texto: #006300;
+  --color-aviso: #fab219;
+  --color-serio: #ec835a;
+  --color-critico: #d03b3b;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-fondo text-texto font-sans antialiased;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  :focus-visible { outline: 2px solid var(--color-serie-1); outline-offset: 2px; border-radius: 4px; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
+
+@layer utilities {
+  .num { font-variant-numeric: tabular-nums; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
