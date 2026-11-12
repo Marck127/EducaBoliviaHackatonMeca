@@ -37,9 +37,9 @@ COLUMNAS_MOV = [
     ("Ejecutado Bs", "ejecutado_bs", "num", 14), ("Ejecutado USD", "ejecutado_usd", "num", 14), ("Tasa", "tasa", "num4", 8),
 ]
 
-AZUL = "1F3A5F"
+AZUL = "417545"
 GRIS = "F2F4F7"
-CELESTE = "E8EEF6"
+CELESTE = "E6F2EC"
 
 
 # ---------------------------------------------------------------------------
