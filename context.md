@@ -113,6 +113,7 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
   - [x] Implementar carga y normalización automática de Excel desde el endpoint administrativo (`POST /importaciones/automatico`).
   - [ ] Verificar en entorno real que `lector.py` procese el Excel institucional (`Prueba ExB Nov 2026.xlsx`) sin errores de tipos y registre el *Audit Trail*.
   - [ ] Validar que `datos.py` y `exportar.py` soporten todos los filtros combinados y niveles de detalle de los 7 reportes.
+  Es un intneto de chatbot. 
 
 -----------NAT (FRONTEND, REPORTES Y DASHBOARD)-------------
 **Agente de Nat:** Tu objetivo es pulir la interfaz web en `basePage/web/`, conectar todas las vistas con el Backend real y optimizar UI/UX.

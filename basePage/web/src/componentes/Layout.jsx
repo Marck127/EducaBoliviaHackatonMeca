@@ -1,3 +1,4 @@
+import { Chatbot } from './Chatbot.jsx'
 import { useState } from 'react'
 import { FileUp, KeyRound, LayoutDashboard, ListOrdered, LogOut, Menu, PencilLine, Settings, Table2, X } from 'lucide-react'
 import { CONFIG } from '../config.js'
@@ -137,7 +138,7 @@ export function Layout({ actual, titulo, children }) {
 
       <main className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8">{children}</main>
 
-      <div className="pointer-events-none fixed right-4 bottom-4 z-50 flex flex-col gap-2" aria-live="polite">
+      <div className="pointer-events-none fixed right-4 bottom-20 z-50 flex flex-col gap-2" aria-live="polite">
         {avisos.map((a) => (
           <div key={a.id} className={cx('pointer-events-auto max-w-sm rounded-lg border px-4 py-2.5 text-sm shadow-lg',
             a.tono === 'error' ? 'border-[#f2c5c5] bg-[#fbeaea] text-[#7d1a1a]' : 'border-borde bg-superficie text-texto')}>
@@ -146,6 +147,7 @@ export function Layout({ actual, titulo, children }) {
         ))}
       </div>
       <CambiarClave abierto={clave} onCerrar={() => setClave(false)} />
+      <Chatbot />
     </div>
   )
 }
