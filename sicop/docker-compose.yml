@@ -1,6 +1,8 @@
 services:
   db:
     image: postgres:16-alpine
+    restart: unless-stopped
+    security_opt: ["no-new-privileges:true"]
     environment:
       POSTGRES_DB: presupuesto
       POSTGRES_USER: postgres
@@ -14,6 +16,8 @@ services:
 
   api:
     build: ./backend
+    restart: unless-stopped
+    security_opt: ["no-new-privileges:true"]
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:${DB_PASSWORD:-postgres}@db:5432/presupuesto
       SECRET_KEY: ${SECRET_KEY:-cambie-esta-clave-secreta-de-al-menos-32-caracteres}
@@ -21,16 +25,19 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       TECNICO_PASSWORD: ${TECNICO_PASSWORD}
       CONSULTA_PASSWORD: ${CONSULTA_PASSWORD}
+      CORS_ORIGINS: ""
     volumes:
       - ./data:/data:ro
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
 
   web:
     build: ./frontend
+    restart: unless-stopped
+    security_opt: ["no-new-privileges:true"]
     depends_on:
       - api
     ports:
@@ -38,6 +45,7 @@ services:
 
   backup:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       PGPASSWORD: ${DB_PASSWORD:-postgres}
     volumes:
