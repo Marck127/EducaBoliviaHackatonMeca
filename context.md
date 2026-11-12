@@ -104,4 +104,3 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
 - **Tareas Pendientes:**
   - [ ] Ejecutar `probar_local.py` y `probar_api.py` para verificar la integración end-to-end.
   - [ ] Crear script de pruebas de estrés (Locust/k6) simulando 50-100 usuarios técnicos consultando y exportando los 7 reportes simultáneamente.
-  - [ ] 
