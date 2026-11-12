@@ -18,9 +18,10 @@
 ## INVENTARIO DE CÓDIGO BASE (BORRADOR EN `basePage/`)
 *Regla crítica para las IAs: Ya existe una base funcional en `basePage/`. Antes de crear archivos desde cero, inspecciona, adapta y extiende los módulos existentes detallados a continuación:*
 
-### 1. Base de Datos (`basePage/db/`)
-- `esquema.sql` (~58 KB): Definición completa de tablas relacionales, relaciones, vistas/funciones y estructura base.
-- `postgres_propio.sql`: Configuración y ajustes específicos para despliegue en PostgreSQL local/propio.
+### 1. Base de Datos (`basePage/db/` y raíz)
+- `init.sql` (Raíz): Script DDL listo para ejecutar en DBeaver. Contiene el Modelo Estrella MVP extraído de la hoja `DB` del Excel (dimensiones: `regiones`, `areas`, `rubros_cuentas`, `financiadores`; tabla central de hechos `movimientos` con saldo automático `STORED`, índices para filtros y 7 vistas SQL de reportes).
+- `basePage/db/esquema.sql` (~58 KB): Definición avanzada alternativa con multi-gestión, control de usuarios y funciones PL/pgSQL.
+- `basePage/db/postgres_propio.sql`: Configuración de roles y funciones de compatibilidad para PostgreSQL local.
 
 ### 2. Backend & API (`basePage/api/`)
 - `main.py`: Punto de entrada de la aplicación FastAPI, configuración de CORS y montaje de rutas.
@@ -66,14 +67,30 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
 *Regla para las IAs: Lee todo el documento para entender el proyecto, pero modifica y escribe código **únicamente** basándote en la zona correspondiente al rol actual del usuario que te consulta.*
 
 -----------MATEO (ARQUITECTURA BD Y POSTGRESQL)-------------
-**Agente de Mateo:** Tu objetivo es auditar, optimizar y gestionar `basePage/db/` en PostgreSQL, evitando cuellos de botella bajo estrés.
-- **Estado Actual:** Base inicial creada en `basePage/db/esquema.sql` y `postgres_propio.sql`.
-- **Última Acción:** Incorporación del esquema SQL base al repositorio `basePage`.
+**Agente de Mateo:** Tu objetivo es auditar, modelar, optimizar y gestionar la base de datos en PostgreSQL, evitando cuellos de botella bajo estrés.
+- **Estado Actual:** Script `init.sql` creado en la raíz del repositorio, listo para ejecutar en DBeaver. Implementa el Modelo Estrella MVP derivado de la hoja `DB` del Excel institucional.
+- **Última Acción:** Creación del script `init.sql` con 4 tablas dimensionales, tabla de hechos central `movimientos` con columna generada `saldo STORED`, índices para filtros cruzados y 7 vistas SQL que reemplazan las tablas dinámicas de Excel.
 - **Esquema/Tablas Activas:**
-  - Revisar y documentar las tablas definidas en `basePage/db/esquema.sql` (usuarios, financiadores, regiones, áreas, rubros, cuentas, presupuestos, modificaciones, movimientos, importaciones).
+  - **Tablas Dimensionales:**
+    * `regiones` (`id`, `nombre`, `creado_en`)
+    * `areas` (`id`, `nombre`, `creado_en`)
+    * `rubros_cuentas` (`id`, `rubro`, `cuenta`, `creado_en`, con restricción `UNIQUE(rubro, cuenta)`)
+    * `financiadores` (`id`, `nombre`, `creado_en`)
+  - **Tabla de Hechos Central:**
+    * `movimientos` (`id`, `region_id`, `area_id`, `rubro_cuenta_id`, `financiador_id`, `fecha`, `mes`, `codigo`, `nombre_detalle`, `tipo`, `numero_comprobante`, `no_cheque`, `ref`, `presupuesto`, `ejecucion`, `saldo` [GENERATED ALWAYS AS (presupuesto - ejecucion) STORED])
+  - **Vistas SQL para Reportes:**
+    * `vista_reporte_rubros` (Ejecución agregada por rubro)
+    * `vista_reporte_rubros_cuentas` (Nivel detallado por rubro y cuenta)
+    * `vista_reporte_financiadores` (Ejecución agregada por financiador/fondo)
+    * `vista_reporte_regiones` (Ejecución agregada por región)
+    * `vista_reporte_area_financiador` (Cruce de área y financiador)
+    * `vista_reporte_mes` (Ejecución mensual acumulada)
+    * `vista_reporte_resumen_general` (Totales globales y porcentaje de ejecución)
 - **Tareas Pendientes:**
-  - [ ] Auditar `esquema.sql` y asegurar compatibilidad total con PostgreSQL puro (`postgres_propio.sql` y `simular_supabase.sql`).
-  - [ ] Agregar índices compuestos para filtros cruzados (`gestion`, `mes`, `financiador_id`, `region_id`, `area_id`, `rubro_id`) y ajustar *connection pooling*.
+  - [x] Diseñar modelo en estrella y generar `init.sql` para DBeaver.
+  - [ ] Ejecutar `init.sql` en DBeaver sobre la base de datos PostgreSQL local.
+  - [ ] Coordinar con Marck (Backend) para el mapeo de columnas de `pd.read_excel(sheet_name='DB')` hacia las tablas dimensionales y `movimientos`.
+  - [ ] Monitorear rendimiento y evaluar `MATERIALIZED VIEW` si las pruebas de estrés de Miguel muestran latencia.
 
 -----------MARCK (BACKEND Y API)-------------
 **Agente de Marck:** Tu objetivo es refinar y completar la API RESTful en `basePage/api/`, asegurar el procesamiento ETL de Excel y la exportación Excel/PDF.
