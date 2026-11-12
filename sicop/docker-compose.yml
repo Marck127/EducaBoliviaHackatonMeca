@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: presupuesto
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d presupuesto"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:${DB_PASSWORD:-postgres}@db:5432/presupuesto
+      SECRET_KEY: ${SECRET_KEY:-cambie-esta-clave-secreta-de-al-menos-32-caracteres}
+      SEED_FILE: /data/Prueba_ExB_Nov_2026.xlsx
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      TECNICO_PASSWORD: ${TECNICO_PASSWORD}
+      CONSULTA_PASSWORD: ${CONSULTA_PASSWORD}
+    volumes:
+      - ./data:/data:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  web:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+  backup:
+    image: postgres:16-alpine
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: >
+      sh -c 'while true; do
+        pg_dump -h db -U postgres -Fc presupuesto > /backups/presupuesto_$$(date +%Y%m%d_%H%M).dump;
+        find /backups -name "*.dump" -mtime +14 -delete;
+        sleep 86400; done'
+
+volumes:
+  pgdata:
