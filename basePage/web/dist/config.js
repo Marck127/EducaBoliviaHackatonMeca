@@ -6,9 +6,10 @@
 //   MODO 'api'       FastAPI + PostgreSQL (SQLAlchemy). Todo pasa por API_URL.
 //                    Si la API sirve esta misma web, deja API_URL vacío.
 window.CONFIG = {
-  MODO: 'demo',
-  SUPABASE_URL: '',          // https://xxxx.supabase.co
-  SUPABASE_KEY: '',          // la publishable key (sb_publishable_...), nunca la secret
+  MODO: 'supabase',
+  SUPABASE_URL: 'https://rvcnxlqvurrzbhrxqlnl.supabase.co',          // https://rvcnxlqvurrzbhrxqlnl.supabase.co
+  SUPABASE_KEY: 'sb_publishable_hY7YWe2jgEmdAa0cFpnFvQ_5JJGJzvC',          // sb_publishable_hY7YWe2jgEmdAa0cFpnFvQ_5JJGJzvC
   API_URL: '',               // https://tu-api.onrender.com
-  ORGANIZACION: '',          // nombre que aparece en el menú
+  ORGANIZACION: 'Enseña por Bolivia',          // Ense
+  
 }
