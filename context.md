@@ -3,6 +3,12 @@
 **Objetivo:** Desarrollar un aplicativo web interactivo para gestionar y generar 7 reportes financieros mediante consultas dinámicas, filtros combinados, visualización en dashboard y exportación a Excel/PDF.
 **Estructura de Datos:** La información proviene originalmente de un Excel contable, migrada a un modelo relacional robusto en PostgreSQL que permite acumulación anual, modificaciones presupuestarias y reportes comparativos por gestión.
 **Seguridad:** El sistema requiere Login/Sign-in con control de acceso por roles (Administradores que cargan y gestionan data; Usuarios Técnicos que consumen reportes y exportan).
+**Identidad Visual (Paleta Institucional):**
+- Fondo principal / blanco institucional: `#FFFFFF`
+- Primario institucional / tinta y botones principales: `#417545`
+- Acento / serie ejecutado y estados activos: `#26A567`
+- Neutro / bordes suaves y textos secundarios: `#919090`
+- Secundario / soporte visual y series complementarias: `#659184`
 
 ---
 
@@ -24,10 +30,10 @@
 - `basePage/db/postgres_propio.sql`: Configuración de roles y funciones de compatibilidad para PostgreSQL local.
 
 ### 2. Backend & API (`basePage/api/`)
-- `main.py`: Punto de entrada de la aplicación FastAPI, configuración de CORS y montaje de rutas.
+- `main.py`: Punto de entrada de la aplicación FastAPI, configuración de CORS y montaje de rutas (incluye `POST /importaciones/automatico`).
 - `autenticacion.py`: Lógica de autenticación, tokens JWT y validación de roles/permisos.
 - `datos.py`: Endpoints y consultas para alimentación de catálogos, tableros y los 7 reportes dinámicos.
-- `lector.py` (~29 KB): Motor ETL de lectura, limpieza y procesamiento de archivos Excel hacia PostgreSQL.
+- `lector.py` (~29 KB): Motor ETL de lectura, limpieza y procesamiento de archivos Excel hacia PostgreSQL. Incluye `cargar_excel_automatico` para auto-poblar catálogos, presupuestos, movimientos y tasas en una sola transacción.
 - `exportar.py` (~18 KB): Generación dinámica de reportes descargables en formatos Excel y PDF.
 - `iniciar_db.py`: Script de inicialización y conexión con la base de datos.
 - `generar_demo.py`: Generador de datos de prueba / exportación de dataset `demo.json`.
@@ -35,13 +41,13 @@
 
 ### 3. Frontend (`basePage/web/`)
 Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`):
-- **Núcleo (`src/`):** `App.jsx` (enrutamiento y estado global), `main.jsx`, `config.js`, `index.css`.
+- **Núcleo (`src/`):** `App.jsx` (enrutamiento y estado global), `main.jsx`, `config.js`, `index.css` (tokens con paleta institucional verde `#FFFFFF`, `#417545`, `#26A567`, `#919090`, `#659184`).
 - **Páginas (`src/paginas/`):**
-  - `Login.jsx`: Vista de inicio de sesión y gestión de credenciales.
+  - `Login.jsx`: Vista de inicio de sesión y gestión de credenciales con paleta institucional verde.
   - `Tablero.jsx`: Dashboard principal con KPIs y resumen ejecutivo.
   - `Reportes.jsx`: Vista interactiva para los 7 reportes financieros y despliegue de niveles.
-  - `Importar.jsx`: Interfaz de administrador para carga y validación de archivos Excel.
-  - `Administracion.jsx`: Gestión de usuarios, roles y parámetros del sistema.
+  - `Importar.jsx`: Interfaz de administrador para carga y validación de archivos Excel con vista previa.
+  - `Administracion.jsx`: Gestión de usuarios, roles, parámetros del sistema y pestaña **Carga automática** para subir el Excel `.xlsx`/`.xlsm` y normalizar toda la base de datos en un paso.
   - `Modificaciones.jsx`: Visualización y gestión de modificaciones presupuestarias.
   - `Movimientos.jsx`: Detalle y consulta de movimientos contables/financieros.
 - **Componentes Reutilizables (`src/componentes/`):**
@@ -49,10 +55,10 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
   - `Sesion.jsx`: Control y persistencia de sesión en cliente.
   - `Filtros.jsx`: Barra de filtros combinados cruzados (gestión, mes, financiador, región, área, rubro).
   - `TablaArbol.jsx`: Tabla jerárquica desplegable por niveles (ej. Rubro -> Cuenta).
-  - `Graficos.jsx`: Visualizaciones interactivas del dashboard.
+  - `Graficos.jsx`: Visualizaciones interactivas del dashboard (series en `#26A567`, `#417545`, `#659184` y barras de presupuesto `#a8dfc3`).
   - `Ui.jsx`: Componentes base de interfaz.
 - **Capa de Datos y Utilidades (`src/datos/` y `src/lib/`):**
-  - `datos/api.js`, `datos/supabase.js`, `datos/demo.js`, `datos/motor.js` (~20 KB, motor de agregación/filtrado en cliente), `datos/comun.js`, `datos/index.js`.
+  - `datos/api.js`, `datos/supabase.js`, `datos/demo.js`, `datos/motor.js` (~20 KB, motor de agregación/filtrado en cliente), `datos/comun.js` (con `subirExcelAutomatico`), `datos/index.js`.
   - `lib/descargas.js`, `lib/formato.js`, `lib/reportes.js`, `lib/ruta.js`, `lib/usar.js`.
 - **Assets Públicos (`public/`):** `demo.json` (dataset estático de respaldo/demo), `config.js`.
 
@@ -94,22 +100,32 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
 
 -----------MARCK (BACKEND Y API)-------------
 **Agente de Marck:** Tu objetivo es refinar y completar la API RESTful en `basePage/api/`, asegurar el procesamiento ETL de Excel y la exportación Excel/PDF.
-- **Estado Actual:** Estructura base funcional en `basePage/api/` (`main.py`, `autenticacion.py`, `datos.py`, `lector.py`, `exportar.py`).
-- **Última Acción:** Carga de módulos base del backend en `basePage/api`.
+- **Estado Actual:** Backend funcional en `basePage/api/` con soporte tanto para importación con borrador/vista previa (`POST /importaciones` + `POST /importaciones/{id}/confirmar`) como para carga y normalización automática directa (`POST /importaciones/automatico`).
+- **Última Acción:** Implementación de `cargar_excel_automatico` en `lector.py` y el endpoint `POST /importaciones/automatico` en `main.py` (restringido a rol `admin`). Este flujo lee el `.xlsx`/`.xlsm`, normaliza catálogos (`financiadores`, `regiones`, `areas`, `rubros`, `cuentas`), deduce gestiones y tasas de cambio desde los movimientos, reemplaza o inserta presupuestos y movimientos y deja trazabilidad en `importaciones`.
 - **Contrato de API (Endpoints Expuestos):**
-  - *(Inspeccionar `main.py`, `autenticacion.py`, `datos.py` y `exportar.py` para documentar aquí las rutas exactas y payloads que consume `web/src/datos/api.js`)*
+  - `POST /importaciones`: Sube archivo Excel y genera borrador con validaciones y vista previa de diferencias.
+  - `POST /importaciones/{id}/confirmar`: Aplica un borrador de importación a las tablas definitivas.
+  - `POST /importaciones/{id}/descartar`: Elimina un borrador pendiente.
+  - `POST /importaciones/automatico` (Solo `admin`): Recibe `archivo` (`.xlsx`/`.xlsm`) y `gestion` opcional; ejecuta ETL completo, auto-crea catálogos y aplica presupuestos y movimientos de inmediato.
+  - `POST /rpc/{fn}`: Ejecuta funciones SQL (`reporte_json`, `resumen_general`, `detalle_movimientos`, `alertas_ejecucion`, etc.).
+  - `POST /exportar`: Genera reportes descargables en formatos `xlsx` y `pdf`.
 - **Tareas Pendientes:**
-  - [ ] Verificar que `lector.py` procese correctamente el Excel institucional (`Prueba ExB Nov 2026.xlsx`) sin errores de tipos y registre el *Audit Trail*.
+  - [x] Implementar carga y normalización automática de Excel desde el endpoint administrativo (`POST /importaciones/automatico`).
+  - [ ] Verificar en entorno real que `lector.py` procese el Excel institucional (`Prueba ExB Nov 2026.xlsx`) sin errores de tipos y registre el *Audit Trail*.
   - [ ] Validar que `datos.py` y `exportar.py` soporten todos los filtros combinados y niveles de detalle de los 7 reportes.
 
 -----------NAT (FRONTEND, REPORTES Y DASHBOARD)-------------
 **Agente de Nat:** Tu objetivo es pulir la interfaz web en `basePage/web/`, conectar todas las vistas con el Backend real y optimizar UI/UX.
-- **Estado Actual:** Aplicación React + Vite estructurada con páginas (`Tablero`, `Reportes`, `Importar`, `Login`, `Administracion`, `Modificaciones`, `Movimientos`) y modo demo (`demo.json` / `motor.js`).
-- **Última Acción:** Integración del borrador frontend en `basePage/web`.
+- **Estado Actual:** Aplicación React + Vite actualizada con la identidad visual institucional en verde (`#FFFFFF`, `#417545`, `#26A567`, `#919090`, `#659184`) y módulo de **Carga automática** integrado en el panel de Administración.
+- **Última Acción:**
+  1. Actualización global de la paleta de colores en `index.css`, `Graficos.jsx`, `Layout.jsx`, `Login.jsx`, `Filtros.jsx`, `TablaArbol.jsx`, `Ui.jsx`, `Importar.jsx`, `Movimientos.jsx` y `Reportes.jsx`.
+  2. Incorporación de la pestaña **Carga automática** en `Administracion.jsx` y el método `subirExcelAutomatico` en `datos/comun.js`, `datos/api.js`, `datos/supabase.js` y `datos/demo.js`, permitiendo que el administrador suba el Excel y organice catálogos y datos con un clic.
 - **Componentes Principales:**
   - Vistas en `src/paginas/`, filtros cruzados en `Filtros.jsx`, tabla jerárquica en `TablaArbol.jsx` y gráficos en `Graficos.jsx`.
 - **Tareas Pendientes:**
-  - [ ] Conmutar la fuente de datos en `src/datos/` desde modo `demo` hacia la API real de FastAPI (`api.js`).
+  - [x] Aplicar paleta institucional verde (`#FFFFFF`, `#417545`, `#26A567`, `#919090`, `#659184`) en toda la SPA.
+  - [x] Crear interfaz de carga automática de Excel en `Administracion.jsx`.
+  - [ ] Configurar `API_URL` en `config.js` (y/o cambiar `MODO` a `'api'` o `'supabase'` con API activa) para operar contra FastAPI en producción.
   - [ ] Validar que los 7 reportes en `Reportes.jsx` desplieguen niveles de detalle y disparen descargas Excel/PDF correctamente.
 
   keys:
@@ -129,5 +145,5 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
 - **Métricas de Rendimiento:**
   - *(Registrar aquí latencias p95/p99 tras ejecutar `probar_api.py` y Locust/k6)*
 - **Tareas Pendientes:**
-  - [ ] Ejecutar `probar_local.py` y `probar_api.py` para verificar la integración end-to-end.
+  - [ ] Ejecutar `probar_local.py` y `probar_api.py` para verificar la integración end-to-end (incluyendo el flujo de carga automática de Excel).
   - [ ] Crear script de pruebas de estrés (Locust/k6) simulando 50-100 usuarios técnicos consultando y exportando los 7 reportes simultáneamente.
