@@ -112,6 +112,16 @@ Configurado con **Vite + React** (`package.json`, `vite.config.js`, `index.html`
   - [ ] Conmutar la fuente de datos en `src/datos/` desde modo `demo` hacia la API real de FastAPI (`api.js`).
   - [ ] Validar que los 7 reportes en `Reportes.jsx` desplieguen niveles de detalle y disparen descargas Excel/PDF correctamente.
 
+  keys:
+  window.CONFIG = {
+  MODO: 'supabase',
+  SUPABASE_URL: 'https://rvcnxlqvurrzbhrxqlnl.supabase.co',          // https://rvcnxlqvurrzbhrxqlnl.supabase.co
+  SUPABASE_KEY: 'sb_publishable_hY7YWe2jgEmdAa0cFpnFvQ_5JJGJzvC',          // sb_publishable_hY7YWe2jgEmdAa0cFpnFvQ_5JJGJzvC
+  API_URL: '',               // https://tu-api.onrender.com
+  ORGANIZACION: 'Enseña por Bolivia',          // Ense
+  
+}
+
 -----------MIGUEL (INTEGRACIÓN, PRUEBAS DE ESTRÉS Y UVPs)-------------
 **Agente de Miguel:** Tu objetivo es unificar el flujo Front-Back-BD, validar el Audit Trail y ejecutar pruebas de estrés (50-100 usuarios concurrentes).
 - **Estado Actual:** Scripts base disponibles en `basePage/pruebas/` (`probar_api.py`, `probar_local.py`, `simular_supabase.sql`).
