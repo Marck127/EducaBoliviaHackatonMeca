@@ -1,0 +1,39 @@
+digraph Flujo_Financiero {
+    rankdir=LR;
+    node [fontname="Helvetica, Arial, sans-serif", shape=box, style="rounded,filled", fillcolor="#f8f9fa", color="#343a40"];
+    edge [fontname="Helvetica, Arial, sans-serif", fontsize=10, color="#6c757d"];
+
+    Inicio [shape=circle, fillcolor="#6fcb9f", label="Inicio"];
+    Login [fillcolor="#ffeaa7", label="Login / Sign-in\n(Admin & Usuario)"];
+    Validacion [shape=diamond, fillcolor="#fab1a0", label="Validación\nde Rol"];
+    
+    DashboardAdmin [fillcolor="#a29bfe", label="Dashboard Admin\n(Gestión y Subida)"];
+    DashboardTecnico [fillcolor="#81ecec", label="Dashboard Técnico\n(Reportes y Filtros)"];
+    
+    Importacion [shape=cylinder, fillcolor="#dfe6e9", label="Procesamiento\nExcel a PostgreSQL"];
+    MotorReportes [fillcolor="#74b9ff", label="Motor de Reportes\n(Consultas Dinámicas)"];
+    Visualizacion [fillcolor="#55efc4", label="Dashboard Visual\n(Gráficos Interactivos)"];
+    Exportacion [fillcolor="#ff7675", label="Exportación\n(Descarga PDF/Excel)"];
+    
+    Fin [shape=doublecircle, fillcolor="#ff7675", label="Logout"];
+
+    Inicio -> Login;
+    Login -> Login [label=" Fallo de credenciales"];
+    Login -> Validacion [label=" Token JWT exitoso"];
+    
+    Validacion -> DashboardAdmin [label=" Rol: Administrador"];
+    Validacion -> DashboardTecnico [label=" Rol: Usuario Técnico"];
+    
+    DashboardAdmin -> Importacion [label=" Carga archivo Excel"];
+    Importacion -> DashboardAdmin [label=" Base de Datos Actualizada"];
+    DashboardAdmin -> DashboardTecnico [label=" Vista de solo lectura"];
+    
+    DashboardTecnico -> MotorReportes [label=" Aplica filtros combinados"];
+    MotorReportes -> Visualizacion [label=" Renderiza datos cruzados"];
+    Visualizacion -> MotorReportes [label=" Ajusta niveles de detalle"];
+    MotorReportes -> Exportacion [label=" Solicita formato"];
+    Exportacion -> DashboardTecnico [label=" Archivo generado"];
+    
+    DashboardAdmin -> Fin [label=" Cerrar sesión"];
+    DashboardTecnico -> Fin [label=" Cerrar sesión"];
+}
