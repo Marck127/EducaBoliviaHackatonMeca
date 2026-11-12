@@ -7,25 +7,25 @@
    la web y los reportes impresos se ven como un solo sistema. */
 @theme {
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --color-tinta: #1f3a5f;
-  --color-tinta-oscura: #172d4a;
-  --color-tinta-clara: #2c4b74;
-  --color-fondo: #f2f4f7;
+  --color-tinta: #417545;
+  --color-tinta-oscura: #315934;
+  --color-tinta-clara: #659184;
+  --color-fondo: #f7f9f8;
   --color-superficie: #ffffff;
-  --color-borde: #e1e5eb;
-  --color-borde-fuerte: #c9d0da;
-  --color-texto: #15202d;
-  --color-texto-2: #4f5d6c;
-  --color-texto-3: #7d8896;
-  /* Series (paleta validada para daltonismo, en orden fijo) */
-  --color-serie-1: #2a78d6;
-  --color-serie-1-claro: #b7d3f6;
-  --color-serie-1-pista: #e3eefc;
-  --color-serie-2: #eb6834;
-  --color-serie-3: #1baf7a;
-  /* Estados: solo cuando el color significa algo, siempre con ícono y texto */
-  --color-bien: #0ca30c;
-  --color-bien-texto: #006300;
+  --color-borde: #e2e6e4;
+  --color-borde-fuerte: #c5cdc9;
+  --color-texto: #1b2420;
+  --color-texto-2: #659184;
+  --color-texto-3: #919090;
+  /* Series para gráficos */
+  --color-serie-1: #26A567;
+  --color-serie-1-claro: #a8dfc3;
+  --color-serie-1-pista: #e6f5ed;
+  --color-serie-2: #659184;
+  --color-serie-3: #417545;
+  /* Estados */
+  --color-bien: #26A567;
+  --color-bien-texto: #417545;
   --color-aviso: #fab219;
   --color-serio: #ec835a;
   --color-critico: #d03b3b;
